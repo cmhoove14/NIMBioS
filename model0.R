@@ -66,8 +66,21 @@ op.fx = function(max.time,   #time to run the model
 op.fx(max.time = 365, start.I = (1-1/r0), start.W = 2,
       par = c(0.0001, 0.0001), c1 = 1, c2 = 1, c3 = 1, c4 = 1) 
 
-optim(par = c(0.0001, 0.0001), #optimize over two intervention parameters
-      fn = op.fx,         #use the function which returns the objective function
-      #other values to pass to op.fx
-      max.time = 365, start.I = (1-1/r0), start.W = 2,
-      c1 = 1, c2 = 1, c3 = 1, c4 = 1) #need to add controls on intervention parameters
+op1 = optim(par = c(0.0001, 0.0001), #optimize over two intervention parameters
+            fn = op.fx,         #use the function which returns the objective function
+            #other values to pass to op.fx
+            max.time = 365, start.I = (1-1/r0), start.W = 2,
+            c1 = 1, c2 = 1, c3 = 1, c4 = 1) #need to add controls on intervention parameters
+
+time.tests = c(1,5,10,25,50)*365  #look at different time scales for optimization
+
+par.fill = matrix(ncol = 2, nrow = length(time.tests))  #
+
+for(t in 1:length(time.tests)){
+  par.fill[t,] = optim(par = c(0.0001, 0.0001), #optimize over two intervention parameters
+        fn = op.fx, #use the function which returns the objective function
+        #other values to pass to op.fx
+        max.time = time.tests[t], start.I = (1-1/r0), start.W = 2,
+        c1 = 1, c2 = 1, c3 = 1, c4 = 1)$par
+    print(t)
+}
